@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCF Central Control Tower</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f9fafb; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(229, 231, 235, 0.5); }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">DCF Central Control Tower</h1>
+                <p class="text-slate-500 text-sm">Live Syncing from Google Sheets</p>
+            </div>
+            <div class="text-right">
+                <span id="sync-status" class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">● LIVE</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="glass p-6 rounded-2xl shadow-sm">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Total Rows</p>
+                <h2 id="total-rows" class="text-4xl font-bold text-slate-800 mt-2">--</h2>
+            </div>
+            <div class="glass p-6 rounded-2xl shadow-sm">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Last Updated</p>
+                <h2 id="update-time" class="text-xl font-bold text-slate-800 mt-2">--</h2>
+            </div>
+            <div class="glass p-6 rounded-2xl shadow-sm">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Status</p>
+                <h2 class="text-xl font-bold text-blue-600 mt-2">Operational</h2>
+            </div>
+        </div>
+
+        <div class="glass p-8 rounded-3xl shadow-sm">
+            <h3 class="font-bold text-slate-700 mb-6">Data Overview (First 2 Columns)</h3>
+            <canvas id="dcfChart" height="120"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // TEH CSV LINK FROM YOUR PUBLISHED SHEET
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTf9w1p-6Y_mY6-x6n8N5I7X-I-KzP6y6_q7_nS7N4K6y_v_I_Y_V_G_L_O_G_I_C_H_E_R_E/pub?output=csv'; 
+        // NOTE: Replace the URL above with your actual "Publish to Web" CSV link
+
+        async function updateDashboard() {
+            Papa.parse(csvUrl, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    const data = results.data;
+                    document.getElementById('total-rows').innerText = data.length;
+                    document.getElementById('update-time').innerText = new Date().toLocaleTimeString();
+                    
+                    const labels = data.slice(0, 10).map(row => Object.values(row)[0]); // Column 1
+                    const values = data.slice(0, 10).map(row => parseFloat(Object.values(row)[1]) || 0); // Column 2
+
+                    renderChart(labels, values);
+                }
+            });
+        }
+
+        let myChart;
+        function renderChart(labels, values) {
+            const ctx = document.getElementById('dcfChart').getContext('2d');
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sheet Data',
+                        data: values,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
+                }
+            });
+        }
+
+        updateDashboard();
+        setInterval(updateDashboard, 30000); // Auto refresh every 30 seconds
+    </script>
+</body>
+</html>
