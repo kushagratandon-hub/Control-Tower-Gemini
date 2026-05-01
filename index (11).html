@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DCF Control Tower · Loans24</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{
+  --bg:#f5f7fa;--w:#fff;--s2:#eef1f6;--s3:#e4e9f2;
+  --b1:#dde3ee;--b2:#c8d0e0;
+  --ink:#0b1f45;--ink2:#2d4070;--ink3:#4a5e85;
+  --blue:#1847d4;--blue2:#3d6af0;--blue3:#bfcffe;
+  --green:#0e7c45;--red:#c0152a;--orange:#c8610a;
+  --purple:#5a1fd4;--teal:#0b7b7b;--pink:#b01562;
+  --sh:0 1px 3px rgba(11,31,69,.06),0 1px 2px rgba(11,31,69,.04);
+  --shm:0 4px 12px rgba(11,31,69,.07),0 2px 4px rgba(11,31,69,.04);
+  --shl:0 8px 24px rgba(11,31,69,.09),0 3px 8px rgba(11,31,69,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Outfit',sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+header{background:var(--ink);color:#fff;padding:0 28px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:var(--shm)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-sq{width:36px;height:36px;background:var(--blue2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px}
+.logo-name{font-weight:800;font-size:16px;letter-spacing:-.02em}
+.logo-tag{font-size:9px;color:rgba(255,255,255,.55);letter-spacing:.16em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-top:1px}
+.hdr-r{display:flex;align-items:center;gap:14px}
+.live-pill{display:flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;background:rgba(14,124,69,.2);border:1px solid rgba(14,124,69,.4);font-size:10px;color:#4ade80;font-weight:600;letter-spacing:.08em;font-family:'JetBrains Mono',monospace}
+.live-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+#upd{font-size:10px;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace}
+.btn-ref{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .2s}
+.btn-ref:hover{background:rgba(255,255,255,.2)}
+
+/* D0/D1 STRIP */
+.dstrip{background:linear-gradient(135deg,#0b1f45 0%,#172f6e 100%);padding:16px 28px;border-bottom:1px solid rgba(255,255,255,.06)}
+.dstrip-inner{max-width:1700px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.dblock{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:16px 20px}
+.dblock-hd{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;font-family:'JetBrains Mono',monospace;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.dblock-hd .dt{font-size:9px;color:rgba(255,255,255,.4);margin-left:auto}
+.dgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.dstat-l{font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;font-family:'JetBrains Mono',monospace}
+.dstat-v{font-size:20px;font-weight:800;color:#fff;line-height:1;letter-spacing:-.02em}
+.dstat-s{font-size:10px;color:rgba(255,255,255,.6);margin-top:3px;font-weight:500}
+
+/* TABS */
+.tabs{background:var(--w);border-bottom:1px solid var(--b1);padding:0 28px;display:flex;position:sticky;top:62px;z-index:200;box-shadow:var(--sh);overflow-x:auto}
+.tab{height:48px;padding:0 20px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--ink3);cursor:pointer;background:none;border:none;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* FILTER GLOBAL BAR */
+.gfbar{background:var(--s2);border-bottom:1px solid var(--b1);padding:10px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;row-gap:8px}
+.fl{font-size:9px;color:var(--ink3);letter-spacing:.14em;text-transform:uppercase;font-weight:700;white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.chip{padding:5px 13px;border-radius:7px;border:1px solid var(--b2);background:var(--w);color:var(--ink2);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:'Outfit',sans-serif}
+.chip:hover{border-color:var(--blue);color:var(--blue)}
+.chip.on{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 6px rgba(24,71,212,.25)}
+.sep{width:1px;height:22px;background:var(--b2);flex-shrink:0;margin:0 4px}
+.di{padding:6px 10px;border-radius:7px;border:1px solid var(--b2);background:var(--w);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink);outline:none;cursor:pointer}
+.di:focus{border-color:var(--blue)}
+
+main{padding:22px 28px;max-width:1700px;margin:0 auto}
+
+/* STATUS */
+#st{display:none;align-items:center;gap:10px;padding:11px 16px;border-radius:9px;margin-bottom:16px;font-size:12px;font-weight:600;border:1px solid}
+#st.L{display:flex;background:#eff6ff;border-color:#bfdbfe;color:var(--blue)}
+#st.E{display:flex;background:#fef2f2;border-color:#fecaca;color:var(--red)}
+#st.K{display:flex;background:#f0fdf4;border-color:#bbf7d0;color:var(--green)}
+.sp{width:12px;height:12px;border:2px solid #bfdbfe;border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sn{display:none;background:linear-gradient(135deg,#fef9c3,#fde68a);border:1px solid #f59e0b;border-radius:9px;padding:11px 16px;margin-bottom:16px;font-size:12px;font-weight:600;color:#78350f;align-items:center;gap:10px}
+
+.page{display:none}.page.on{display:block}
+
+/* KPI GRID */
+.kg{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;margin-bottom:22px}
+.kc{background:var(--w);border:1px solid var(--b1);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--sh);transition:all .2s;cursor:default}
+.kc::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--kc,var(--blue))}
+.kc:hover{transform:translateY(-2px);box-shadow:var(--shl);border-color:var(--kc,var(--blue))}
+.kl{font-size:9px;color:var(--ink3);letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:10px;font-family:'JetBrains Mono',monospace}
+.kv{font-size:28px;font-weight:800;color:var(--ink);line-height:1;letter-spacing:-.02em}
+.ks{font-size:11px;color:var(--ink3);margin-top:6px;font-weight:500}
+
+/* SEC */
+.sec{display:flex;align-items:center;gap:12px;margin:26px 0 16px}
+.st{font-weight:700;font-size:14px;letter-spacing:-.01em;color:var(--ink);white-space:nowrap}
+.sl{flex:1;height:1px;background:var(--b1)}
+.sn2{font-size:11px;color:var(--ink3);font-family:'JetBrains Mono',monospace}
+
+/* CARD */
+.card{background:var(--w);border:1px solid var(--b1);border-radius:12px;padding:20px;box-shadow:var(--sh);overflow:hidden}
+.ct{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ct-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+
+/* Per-chart date filter */
+.cdf{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap}
+.cdf label{font-size:10px;color:var(--ink3);font-weight:600;font-family:'JetBrains Mono',monospace}
+.cdf .di{padding:4px 8px;font-size:10px}
+.cdf .chip{padding:3px 9px;font-size:10px}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:1200px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:750px){.g2,.g3,.g4{grid-template-columns:1fr}.dgrid{grid-template-columns:repeat(3,1fr)}}
+
+.cw{position:relative;height:300px}
+.cwl{position:relative;height:360px}
+.cwm{position:relative;height:240px}
+
+/* FUNNEL */
+.fn{display:flex;flex-direction:column;gap:5px;align-items:center}
+.fs{border-radius:9px;padding:13px 18px;display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid;transition:transform .2s}
+.fs:hover{transform:translateX(3px)}
+.fnm{font-size:11px;font-weight:700;letter-spacing:.06em}
+.fnv{font-size:20px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.fnp{font-size:10px;opacity:.8;margin-top:2px;text-align:right;font-weight:600}
+
+/* TABLE */
+.tw{overflow-x:auto;border-radius:9px;border:1px solid var(--b1)}
+.tw::-webkit-scrollbar{height:6px}.tw::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}
+th{padding:10px 12px;background:var(--s2);border-bottom:2px solid var(--b1);color:var(--ink2);font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;white-space:nowrap;font-family:'JetBrains Mono',monospace;position:sticky;top:0}
+td{padding:10px 12px;border-bottom:1px solid var(--b1);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f5f8ff}
+.nm{color:var(--blue);font-weight:600;font-family:'JetBrains Mono',monospace}
+.pc{color:var(--ink3);font-family:'JetBrains Mono',monospace;font-weight:500}
+.z{color:var(--b2)}
+.db{font-size:10px;padding:2px 7px;border-radius:6px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.du{background:#dcfce7;color:var(--green)}.dd{background:#fee2e2;color:var(--red)}.dn{background:var(--s2);color:var(--ink3)}
+
+/* Channel badge */
+.ch{display:inline-flex;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600}
+.cd{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+.cc{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.cs{background:#fed7aa;color:#9a3412;border:1px solid #fdba74}
+.cl{background:#fef3c7;color:#854d0e;border:1px solid #fde68a}
+.cr{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.cx{background:var(--s2);color:var(--ink3);border:1px solid var(--b2)}
+
+.pg{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--ink3);font-family:'JetBrains Mono',monospace;font-weight:600}
+
+footer{text-align:center;padding:24px;color:var(--ink3);font-size:10px;letter-spacing:.1em;border-top:1px solid var(--b1);margin-top:28px;font-family:'JetBrains Mono',monospace;background:var(--w);text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-sq">D</div>
+    <div><div class="logo-name">DCF CONTROL TOWER</div><div class="logo-tag">Loans24 · Dealer | C2B | CC · New_Raw_Data</div></div>
+  </div>
+  <div class="hdr-r">
+    <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+    <span id="upd">—</span><span id="next-ref" style="font-size:10px;color:rgba(255,255,255,.4);font-family:'JetBrains Mono',monospace"></span>
+    <button class="btn-ref" onclick="loadAll()">↻ Refresh</button>
+  </div>
+</header>
+
+<!-- D0 / D-1 STRIP -->
+<div class="dstrip">
+  <div class="dstrip-inner">
+    <div class="dblock">
+      <div class="dblock-hd"><span style="color:#4ade80">●</span> D0 — TODAY <span class="dt" id="d0dt"></span></div>
+      <div class="dgrid" id="d0g"></div>
+    </div>
+    <div class="dblock">
+      <div class="dblock-hd"><span style="color:#fbbf24">●</span> D-1 — YESTERDAY <span class="dt" id="d1dt"></span></div>
+      <div class="dgrid" id="d1g"></div>
+    </div>
+    <div class="dblock">
+      <div class="dblock-hd"><span style="color:#60a5fa">●</span> MTD — MONTH TO DATE <span class="dt" id="mtddt"></span></div>
+      <div class="dgrid" id="mtdg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" data-p="ov"  onclick="showP(this)">📊 Overview</button>
+  <button class="tab"    data-p="mv"  onclick="showP(this)">📈 MTD vs LMTD</button>
+  
+  <button class="tab"    data-p="ch"  onclick="showP(this)">🎯 Channels</button>
+  <button class="tab"    data-p="sm"  onclick="showP(this)">👤 SM View</button>
+  <button class="tab"    data-p="rsm" onclick="showP(this)">📊 RSM View</button>
+  <button class="tab"    data-p="d1d" onclick="showP(this)">💸 D-1 Disbursal</button>
+  <button class="tab"    data-p="dl"  onclick="showP(this)">🏪 Dealers</button>
+  <button class="tab"    data-p="rw"  onclick="showP(this)">🔎 Raw Data</button>
+</div>
+
+<!-- GLOBAL FILTERS -->
+<div class="gfbar">
+  <span class="fl">Channel</span>
+  <button class="chip on" data-ch="ALL"       onclick="sCh(this)">All</button>
+  <button class="chip"    data-ch="Dealer"    onclick="sCh(this)">Dealer</button>
+  <button class="chip"    data-ch="C2B"       onclick="sCh(this)">C2B</button>
+  <button class="chip"    data-ch="DSA"       onclick="sCh(this)">DSA</button>
+  <button class="chip"    data-ch="Launchpad" onclick="sCh(this)">Launchpad</button>
+  <button class="chip"    data-ch="RED"       onclick="sCh(this)">🔴 Red</button>
+  <div class="sep"></div>
+  <span class="fl">Date</span>
+  <input type="date" id="gdf" class="di" onchange="reB()">
+  <span style="color:var(--ink3);font-size:11px">→</span>
+  <input type="date" id="gdt" class="di" onchange="reB()">
+  <button class="chip" onclick="qd('mtd')">MTD</button>
+  <button class="chip" onclick="qd('lmtd')">LMTD</button>
+  <button class="chip" onclick="qd('7d')">7D</button>
+  <button class="chip" onclick="qd('30d')">30D</button>
+  <button class="chip" onclick="qd('reset')">Reset</button>
+</div>
+
+<main>
+  <div id="st"><div class="sp"></div><span id="sm">Loading…</span></div>
+  <div id="sn" class="sn">⚠️ <div><strong>Preview mode</strong> — sample data. Live on GitHub Pages.</div></div>
+
+  <div id="dash" style="display:none">
+
+    <!-- OVERVIEW -->
+    <div id="p-ov" class="page on">
+      <div class="kg" id="kpis"></div>
+      <div class="sec"><span class="st">MTD vs LMTD — Key Metrics</span><div class="sl"></div><span class="sn2" id="period"></span></div>
+      <div class="g4" id="mvl"></div>
+      <div class="sec"><span class="st">Daily Trend</span><div class="sl"></div></div>
+      <div class="card">
+        <div class="ct"><div class="ct-ico" style="background:#1847d4">📈</div> Daily Lead · Login · Approval · Disbursal — Last 30 Days
+          <div class="cdf"><label>From</label><input type="date" id="tr-f" class="di"><label>To</label><input type="date" id="tr-t" class="di"><button class="chip" onclick="apCDF('trend')">Apply</button></div>
+        </div>
+        <div class="cwl"><canvas id="cTrend"></canvas></div>
+      </div>
+      <div class="sec"><span class="st">Channel Distribution</span><div class="sl"></div></div>
+      <div class="g3">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#1847d4">🎯</div> Leads by Channel</div><div class="cwm"><canvas id="cPL"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#0e7c45">💰</div> Disbursals by Channel</div><div class="cwm"><canvas id="cPD"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#c0152a">🔴</div> Red Flag Distribution</div><div class="cwm"><canvas id="cPR"></canvas></div></div>
+      </div>
+      <div class="sec"><span class="st">Region & City Analysis</span><div class="sl"></div></div>
+      <div class="g2">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#5a1fd4">🗺️</div> Leads by Region</div><div class="cw"><canvas id="cReg"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#0b7b7b">🏙️</div> Top Cities by Disbursals</div><div class="cw"><canvas id="cCity"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- MTD vs LMTD -->
+    <div id="p-mv" class="page">
+      <div class="sec"><span class="st">MTD vs LMTD — Daily Comparison</span><div class="sl"></div></div>
+      <div class="g2">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#1847d4">🎯</div> Leads</div><div class="cw"><canvas id="cML"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#5a1fd4">📝</div> Logins</div><div class="cw"><canvas id="cMLg"></canvas></div></div>
+      </div>
+      <div class="g2" style="margin-top:14px">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#c8610a">✅</div> Approvals</div><div class="cw"><canvas id="cMA"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#0e7c45">💸</div> Disbursals</div><div class="cw"><canvas id="cMD"></canvas></div></div>
+      </div>
+      <div class="sec"><span class="st">Red Flag & TNC</span><div class="sl"></div></div>
+      <div class="g2">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#c0152a">🔴</div> Red Flag Cases — MTD vs LMTD</div><div class="cw"><canvas id="cMR"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#b01562">📄</div> TNC Generated — MTD vs LMTD</div><div class="cw"><canvas id="cMT"></canvas></div></div>
+      </div>
+      <div class="sec"><span class="st">Cumulative MTD vs LMTD</span><div class="sl"></div></div>
+      <div class="card"><div class="ct"><div class="ct-ico" style="background:#1847d4">📊</div> Cumulative All Metrics</div><div class="cwl"><canvas id="cCum"></canvas></div></div>
+    </div>
+
+    <!-- CHANNELS -->
+    <div id="p-ch" class="page">
+      <div class="sec"><span class="st">Channel Performance Matrix</span><div class="sl"></div></div>
+      <div class="card">
+        <div class="ct"><div class="ct-ico" style="background:#1847d4">📋</div> Full Channel Breakdown</div>
+        <div class="tw"><table><thead><tr id="cht-h"></tr></thead><tbody id="cht-b"></tbody></table></div>
+      </div>
+      <div class="sec"><span class="st">Channel Charts</span><div class="sl"></div></div>
+      <div class="g2">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#1847d4">📊</div> All Metrics by Channel</div><div class="cwl"><canvas id="cChM"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#0e7c45">🔄</div> Channel Conversion %</div><div class="cwl"><canvas id="cChC"></canvas></div></div>
+      </div>
+      <div class="sec"><span class="st">DS_CHANNEL & Channel Revised</span><div class="sl"></div></div>
+      <div class="g2">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#0b7b7b">📊</div> DS_CHANNEL Breakdown</div><div class="cw"><canvas id="cDSCh"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#b01562">📊</div> Channel Revised Breakdown</div><div class="cw"><canvas id="cChR"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- DEALERS -->
+    <div id="p-dl" class="page">
+      <div class="sec"><span class="st">Dealer Analysis</span><div class="sl"></div><span class="sn2" id="dlc"></span></div>
+      <div class="kg" id="dlkpi"></div>
+      <div class="g2">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#1847d4">🏆</div> Top 15 Dealers — Disbursals</div><div class="cwl"><canvas id="cTD"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#0e7c45">📈</div> Lead → Disbursal % by Dealer</div><div class="cwl"><canvas id="cDC"></canvas></div></div>
+      </div>
+      <div class="sec"><span class="st">Dealer Detail Table</span><div class="sl"></div></div>
+      <div class="card">
+        <div class="ct"><div class="ct-ico" style="background:#1847d4">📋</div> All Dealers
+          <input id="dls" type="text" placeholder="Search dealer…" oninput="fD(this.value)" style="margin-left:auto;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:6px 12px;color:var(--ink);font-family:inherit;font-size:12px;outline:none;width:220px">
+        </div>
+        <div class="tw"><table><thead><tr id="dlt-h"></tr></thead><tbody id="dlt-b"></tbody></table></div>
+        <div id="dlpg" class="pg"></div>
+      </div>
+    </div>
+
+    <!-- RAW DATA -->
+    <div id="p-rw" class="page">
+      <div class="sec"><span class="st">Raw Data — New_Raw_Data</span><div class="sl"></div><span class="sn2" id="rwc"></span></div>
+      <div class="card">
+        <div class="ct"><div class="ct-ico" style="background:#1847d4">🔎</div> Explorer
+          <input id="rws" type="text" placeholder="Search…" oninput="fR(this.value)" style="margin-left:auto;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:6px 12px;color:var(--ink);font-family:inherit;font-size:12px;outline:none;width:220px">
+        </div>
+        <div class="tw"><table><thead><tr id="rwt-h"></tr></thead><tbody id="rwt-b"></tbody></table></div>
+        <div id="rwpg" class="pg"></div>
+      </div>
+    </div>
+
+
+    <!-- SM VIEW -->
+    <div id="p-sm" class="page">
+      <div class="sec"><span class="st">SM Performance — MTD vs LMTD</span><div class="sl"></div></div>
+      <div class="card"><div class="tw"><table><thead><tr id="smt-h"></tr></thead><tbody id="smt-b"></tbody></table></div></div>
+      <div class="sec"><span class="st">SM Charts</span><div class="sl"></div></div>
+      <div class="g2">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#1847d4">📊</div> SM — Leads & Disbursals MTD vs LMTD</div><div class="cwl"><canvas id="cSM"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#0e7c45">🔄</div> SM — Conversion % MTD</div><div class="cwl"><canvas id="cSMC"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- RSM VIEW -->
+    <div id="p-rsm" class="page">
+      <div class="sec"><span class="st">RSM Performance — MTD vs LMTD</span><div class="sl"></div></div>
+      <div class="card"><div class="tw"><table><thead><tr id="rsmt-h"></tr></thead><tbody id="rsmt-b"></tbody></table></div></div>
+      <div class="sec"><span class="st">RSM Charts</span><div class="sl"></div></div>
+      <div class="g2">
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#5a1fd4">📊</div> RSM — Leads & Disbursals MTD vs LMTD</div><div class="cwl"><canvas id="cRSM"></canvas></div></div>
+        <div class="card"><div class="ct"><div class="ct-ico" style="background:#c8610a">🔄</div> RSM — Conversion % MTD</div><div class="cwl"><canvas id="cRSMC"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- D-1 DISBURSAL REPORT -->
+    <div id="p-d1d" class="page">
+      <div class="sec"><span class="st">D-1 Disbursal Report — SM Wise</span><div class="sl"></div><span class="sn2" id="d1d-dt"></span></div>
+      <div class="kg" id="d1d-kpi"></div>
+      <div class="sec"><span class="st">SM Summary</span><div class="sl"></div></div>
+      <div class="card" style="margin-bottom:16px"><div class="tw"><table><thead><tr id="d1sm-h"></tr></thead><tbody id="d1sm-b"></tbody></table></div></div>
+      <div class="sec"><span class="st">Full Disbursal Detail (All Columns)</span><div class="sl"></div></div>
+      <div class="card">
+        <div class="ct"><div class="ct-ico" style="background:#0e7c45">💸</div> All Disbursed Cases Yesterday
+          <input id="d1ds" type="text" placeholder="Search…" oninput="fD1(this.value)" style="margin-left:auto;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:6px 12px;color:var(--ink);font-family:inherit;font-size:12px;outline:none;width:220px">
+        </div>
+        <div class="tw"><table><thead><tr id="d1dt-h"></tr></thead><tbody id="d1dt-b"></tbody></table></div>
+        <div id="d1pg" class="pg"></div>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>DCF CONTROL TOWER · LOANS24 · NEW_RAW_DATA · AUTO-REFRESH 5 MIN</footer>
+
+<script>
+// ── CONFIG ──────────────────────────────────────
+const RAW_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTHL2yTqNz75345l6Qh42lMXLcNQIUby4laJI1Vgb1lJvkWP5tdPP_JyAQP4Ur5jT5dmsX07-v4MW6o/pub?gid=2122627395&single=true&output=csv';
+// Scheduled refresh times: 2am, 9am, 12:30pm, 3pm, 6pm, 10pm
+function scheduleNextRefresh(){
+  const now=new Date();
+  const slots=[[2,0],[9,0],[12,30],[15,0],[18,0],[22,0]];
+  const nowMins=now.getHours()*60+now.getMinutes();
+  let next=null;
+  for(const [h,m] of slots){const sm=h*60+m;if(sm>nowMins){next=sm;break;}}
+  if(!next)next=slots[0][0]*60+slots[0][1]+1440; // next day 2am
+  const delay=(next-nowMins)*60*1000;
+  setTimeout(()=>{loadAll();scheduleNextRefresh();},delay);
+  const nd=new Date(now.getTime()+delay);
+  document.getElementById('next-ref').textContent='Next: '+nd.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── EXACT COLUMN NAMES from New_Raw_Data ─────────
+// Mapped from user-provided column list
+const F={
+  ID:'LEAD_ID',
+  LEAD_DT:'LEAD_CREATION_DATE',
+  LOGIN_DT:'LOGIN_DATE',
+  APPROV_DT:'APPROVAL_DATE',
+  DISB_DT:'DISBURSAL_DATETIME',      // col E
+  DISB_DT2:'DISBURSAL_DATE',          // col P (fallback)
+  DISB_DT3:'Disbursal Date',          // col AU
+  CHANNEL:'CHANNEL',
+  CHANNEL_REV:'Channel Revised',      // col AV
+  CHANNEL_DS:'DS_CHANNEL_',           // col Q
+  CITY:'DEALER_CITY',
+  DEALER_CODE:'DEALER_CODEE',         // note double E
+  DEALER:'DEALER_NAME',
+  RED:'RED_FLAG',                     // col J
+  RED_REASON:'RED_CHANNEL_REASON',    // col V
+  FOS:'FOS_MAPPING',
+  SM:'SM_MAPPING',
+  ASM:'ASM_MAPPING',
+  RSM:'RSM_MAPPING',
+  IS_LEAD:'IS_LEAD',
+  TNC_GEN:'TNC_GENERATED_DATE',
+  TNC_ACC:'TNC_ACCEPTED_TIMESTAMP',
+  FINAL_STATUS:'FINAL_LOAN_STATUS',
+  UNNATI:'UNNATI',
+  BANKING:'BANKING_REQUIRED',
+  DSA_TYPE:'DSA_TYPE_MAPPING',
+  RISK:'RISK_BUCKET',
+  CIBIL:'CIBIL_SCORE_TEMP',
+  EMPLOY:'EMPLOYMENT_DETAILS',
+  REGION:'REGION',
+  SOURCE:'SOURCE',
+  PLATFORM:'PLATFORM_TYPE',
+  ENTRY:'ENTRY_POINT',
+  LEAD_STATES:'LEAD_STATES',
+  LOAN_SANCTION:'LOAN_SANCTION',
+  CASE_STATUS:'CASE_STATUS',
+  HPA:'HPA',
+  REFINANCE_DLR:'Refinance Dealer',
+  NBFC_CH:'NBFC Channel',
+  ONBOARD:'ONBOARD',
+  SM_FLOW:'SM_MAPPING',
+};
+
+// ── CHART PALETTE ───────────────────────────────
+const P=['#1847d4','#0e7c45','#c8610a','#5a1fd4','#c0152a','#0b7b7b','#b01562','#7c5c00','#1a6b8a','#6b3fa0'];
+Chart.register(ChartDataLabels);
+Chart.defaults.font.family="'Outfit',sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.color='#4a5e85';
+Chart.defaults.plugins.legend.labels.usePointStyle=true;
+Chart.defaults.plugins.legend.labels.padding=12;
+Chart.defaults.plugins.tooltip.backgroundColor='rgba(11,31,69,.95)';
+Chart.defaults.plugins.tooltip.cornerRadius=8;
+Chart.defaults.plugins.tooltip.padding=10;
+
+// Peak label plugin config (always visible)
+const DL_BAR={datalabels:{display:'auto',anchor:'end',align:'top',font:{size:10,weight:'600',family:"'JetBrains Mono',monospace"},color:'#0b1f45',formatter:v=>v>0?fmtN(v):null,clamp:true,offset:2}};
+const DL_LINE={datalabels:{display:'auto',anchor:'center',align:'top',font:{size:9,weight:'600',family:"'JetBrains Mono',monospace"},color:'#0b1f45',formatter:(v,ctx)=>{const d=ctx.dataset.data;const mx=Math.max(...d.filter(x=>x!=null));return v===mx?fmtN(v):null;}}};
+const DL_PIE={datalabels:{display:true,formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);const p=((v/t)*100).toFixed(1);return p>3?`${fmtN(v)}\n${p}%`:null;},font:{size:10,weight:'700',family:"'JetBrains Mono',monospace"},color:'#fff',textShadowBlur:4,textShadowColor:'rgba(0,0,0,.5)'}};
+const NO_DL={datalabels:{display:false}};
+
+// ── STATE ────────────────────────────────────────
+let raw=[],aCh='ALL',gDf=null,gDt=null;
+const TODAY=new Date(); TODAY.setHours(0,0,0,0); // Real today, not hardcoded
+let dlAll=[],dlFil=[],rwAll=[],rwFil=[];
+let dlPg=0,rwPg=0;
+const PG=25;
+
+// ── HELPERS ──────────────────────────────────────
+const n=v=>v?(parseFloat(String(v).replace(/[₹,% \r\n]/g,''))||0):0;
+function fmtN(v){return Math.round(v).toLocaleString('en-IN');}
+const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'—';
+const pctN=(a,b)=>b?(a/b)*100:0;
+function dt(v){
+  if(!v) return null;
+  const s=String(v).trim();
+  if(!s||s==='-'||s==='—') return null;
+  // Excel serial number (e.g. 45779)
+  if(/^\d{4,5}$/.test(s)){const d=new Date((+s-25569)*86400000);return isNaN(d)?null:d;}
+  // ISO: 2026-04-27 or 2026-04-27T14:35:22 or 2026-04-27 18:00:30 (your format)
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)){const d=new Date(s.split('T')[0].split(' ')[0]);return isNaN(d)?null:d;}
+  // DD/MM/YYYY HH:MM:SS or DD-MM-YYYY (handles datetime col E)
+  const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+  if(m){let y=+m[3];if(y<100)y+=2000;const d=new Date(y,+m[2]-1,+m[1]);return isNaN(d)?null:d;}
+  // DD-Mon-YYYY e.g. 27-Apr-2026
+  const m2=s.match(/^(\d{1,2})[- ]([A-Za-z]{3})[- ](\d{2,4})/);
+  if(m2){const months={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};let y=+m2[3];if(y<100)y+=2000;const mo=months[m2[2].toLowerCase()];if(mo!==undefined){const d=new Date(y,mo,+m2[1]);return isNaN(d)?null:d;}}
+  // fallback
+  const d=new Date(s);return isNaN(d)?null:d;
+}
+// Compare only date part (ignores time) - KEY FIX for DISBURSAL_DATETIME
+function sameDay(d,target){return d&&target&&d.getFullYear()===target.getFullYear()&&d.getMonth()===target.getMonth()&&d.getDate()===target.getDate();}
+function dateInRange(d,from,to){if(!d)return false;const dk=d.getFullYear()*10000+d.getMonth()*100+d.getDate();const fk=from?from.getFullYear()*10000+from.getMonth()*100+from.getDate():0;const tk=to?to.getFullYear()*10000+to.getMonth()*100+to.getDate():99999999;return dk>=fk&&dk<=tk;}
+const dKey=d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:'';
+const dim=d=>new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+function delta(a,b){if(!b)return'<span class="db dn">—</span>';const p=((a-b)/b*100).toFixed(1);return a>=b?`<span class="db du">▲${p}%</span>`:`<span class="db dd">▼${Math.abs(p)}%</span>`;}
+function chCls(c){const l=(c||'').toLowerCase();if(l.includes('c2b'))return'cc';if(l.includes('dealer'))return'cd';if(l.includes('dsa')||l.includes('nxfin')||l.includes('rup')||l.includes('revbay')||l.includes('kuwy')||l.includes('indicorn'))return'cs';if(l.includes('launch'))return'cl';if(l.includes('red'))return'cr';return'cx';}
+function isRed(r){const v=String(r[F.RED]||'').toLowerCase();return v==='yes'||v==='1'||v==='true'||v==='y';}
+
+// ── MTD/LMTD RANGES ─────────────────────────────
+function mtdR(){const t=new Date(TODAY);return{s:new Date(t.getFullYear(),t.getMonth(),1),e:t};}
+function lmtdR(){const t=new Date(TODAY);return{s:new Date(t.getFullYear(),t.getMonth()-1,1),e:new Date(t.getFullYear(),t.getMonth()-1,t.getDate())};}
+function lmFullR(){const t=new Date(TODAY);return{s:new Date(t.getFullYear(),t.getMonth()-1,1),e:new Date(t.getFullYear(),t.getMonth(),0)};}
+
+// ── CSV PARSE ────────────────────────────────────
+function parseCSV(txt){const ls=txt.trim().split('\n');if(!ls.length)return[];const hs=csvR(ls[0]);return ls.slice(1).map(l=>{const v=csvR(l),o={};hs.forEach((h,i)=>o[h.trim()]=(v[i]||'').trim());return o;}).filter(r=>Object.values(r).some(v=>v));}
+function csvR(l){const res=[];let c='',q=false;for(let i=0;i<l.length;i++){if(l[i]==='"')q=!q;else if(l[i]===','&&!q){res.push(c);c='';}else c+=l[i];}res.push(c);return res;}
+async function fetchCSV(url){const t='&_='+Date.now();const tries=[()=>fetch(url+t),()=>fetch('https://corsproxy.io/?'+encodeURIComponent(url+t)),()=>fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(url))];let e;for(const f of tries){try{const r=await f();if(!r.ok)continue;const tx=await r.text();if(tx&&tx.length>30)return parseCSV(tx);}catch(er){e=er;}}throw e||new Error('Fetch failed');}
+
+// ── SAMPLE DATA ──────────────────────────────────
+function genSample(){
+  const dlrs=['Vraj Motors','Sai Wheels','Premier Cars','Auto Hub','Dream Cars','City Motors','Star Auto','Royal Motors','Elite Cars','Prime Auto','Galaxy Wheels','Apex Motors','Crown Cars','Diamond Auto','Eagle Motors'];
+  const chs=['Dealer','C2B Dealer','DSA','Launchpad','NXFin','C2b DSA','Rupfintech'];
+  const cities=['Mumbai','Delhi','Bangalore','Ahmedabad','Pune','Chennai','Hyderabad','Kolkata','Jaipur','Surat'];
+  const regions=['West','North','South','East','Central'];
+  const statuses=['DISBURSED','APPROVED','LOGIN DONE','LEAD CREATED','REJECTED','CANCELLED'];
+  const rows=[];
+  for(let d=0;d<60;d++){
+    const date=new Date(TODAY);date.setDate(date.getDate()-d);
+    const vol=30+Math.floor(Math.sin(d/7)*8)+Math.floor(Math.random()*12);
+    for(let i=0;i<vol;i++){
+      const leadDt=dKey(date);
+      const stg=Math.random();
+      const hasLogin=stg>0.40;const hasAppr=stg>0.62;const hasDisb=stg>0.80;
+      const lDate=hasLogin?new Date(date.getTime()+Math.random()*3*86400000):null;
+      const aDate=hasAppr?new Date((lDate||date).getTime()+Math.random()*5*86400000):null;
+      const disbDate=hasDisb?new Date((aDate||date).getTime()+Math.random()*3*86400000):null;
+      rows.push({
+        [F.ID]:'L'+String(100000+rows.length).slice(1),
+        [F.LEAD_DT]:leadDt,
+        [F.LOGIN_DT]:hasLogin?dKey(lDate):'',
+        [F.APPROV_DT]:hasAppr?dKey(aDate):'',
+        [F.DISB_DT]:hasDisb?dKey(disbDate):'',
+        [F.CHANNEL]:chs[Math.floor(Math.random()*chs.length)],
+        [F.CITY]:cities[Math.floor(Math.random()*cities.length)],
+        [F.DEALER_CODE]:'DC'+String(1000+Math.floor(Math.random()*15)).slice(1),
+        [F.DEALER]:dlrs[Math.floor(Math.random()*dlrs.length)],
+        [F.RED]:Math.random()<0.15?'Yes':'No',
+        [F.REGION]:regions[Math.floor(Math.random()*regions.length)],
+        [F.FINAL_STATUS]:hasDisb?'DISBURSED':hasAppr?'APPROVED':hasLogin?'LOGIN DONE':'LEAD CREATED',
+        [F.LEAD_STATES]:hasDisb?'DISBURSED':hasAppr?'APPROVED':hasLogin?'LOGIN':' LEAD',
+        [F.TNC_GEN]:hasLogin?dKey(lDate):'',
+        [F.CASE_STATUS]:statuses[Math.floor(Math.random()*statuses.length)],
+        [F.LOAN_SANCTION]:hasAppr?(400000+Math.floor(Math.random()*600000)).toString():'',
+        [F.CHANNEL_DS]:chs[Math.floor(Math.random()*chs.length)],
+        [F.CHANNEL_REV]:chs[Math.floor(Math.random()*chs.length)],
+        [F.HPA]:Math.random()>0.5?'YES':'NO',
+        [F.UNNATI]:Math.random()>0.7?'Y':'N',
+      });
+    }
+  }
+  return rows;
+}
+
+// ── STATUS ───────────────────────────────────────
+function setSt(t,m){const e=document.getElementById('st');e.className=t;e.style.display='flex';document.getElementById('sm').textContent=m;if(t==='K')setTimeout(()=>e.style.display='none',2500);}
+
+// ── LOAD ─────────────────────────────────────────
+async function loadAll(){
+  setSt('L','Fetching New_Raw_Data…');
+  document.getElementById('dash').style.display='none';
+  document.getElementById('sn').style.display='none';
+  try{
+    raw=await fetchCSV(RAW_URL);
+    if(!raw.length)throw new Error('Empty');
+    setSt('K',`✓ ${raw.length} rows from New_Raw_Data`);
+    document.getElementById('upd').textContent='Updated '+new Date().toLocaleTimeString();
+  }catch(e){
+    raw=genSample();
+    setSt('E','⚠ Preview — sample data. Live on GitHub Pages.');
+    document.getElementById('sn').style.display='flex';
+    document.getElementById('upd').textContent='Sample · '+new Date().toLocaleTimeString();
+  }
+  rwAll=[...raw];rwFil=[...rwAll];
+  document.getElementById('rwc').textContent=raw.length+' rows';
+  reB();
+  document.getElementById('dash').style.display='block';
+}
+
+// ── PAGE NAV ─────────────────────────────────────
+function showP(btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  const page=document.getElementById('p-'+btn.dataset.p);
+  page.classList.add('on');
+  // Re-render charts after page is visible (fixes 0-height canvas issue)
+  setTimeout(()=>{
+    const rows=gFil();
+    const mr=mtdR(),lr=lmtdR(),lmfr=lmFullR();
+    const mtd=mTots(rows,mr.s,mr.e);
+    const lmtd=mTots(rows,lr.s,lr.e);
+    const lmFull=mTots(rows,lmfr.s,lmfr.e);
+    const p=btn.dataset.p;
+    if(p==='ov'){bTrend(rows,gDf||(()=>{const x=new Date(TODAY);x.setDate(x.getDate()-30);return x;})(),gDt||TODAY);bPies(rows);bRegionCity(rows);}
+    if(p==='mv'){bMTDvsLMTD(rows,mr,lr);}
+    if(p==='ch'){bChannels(rows);}
+    if(p==='sm'){bSM(rows,mr,lr);}
+    if(p==='rsm'){bRSM(rows,mr,lr);}
+    if(p==='d1d'){bD1Disb();}
+    if(p==='dl'){bDealers(rows,mtd);}
+  },50);
+}
+
+// ── GLOBAL FILTERS ───────────────────────────────
+function sCh(el){aCh=el.dataset.ch;document.querySelectorAll('[data-ch]').forEach(c=>c.classList.remove('on'));el.classList.add('on');reB();}
+function qd(t){
+  const d=new Date(TODAY),f=document.getElementById('gdf'),to=document.getElementById('gdt');
+  if(t==='reset'){f.value='';to.value='';gDf=null;gDt=null;}
+  else if(t==='mtd'){f.value=dKey(new Date(d.getFullYear(),d.getMonth(),1));to.value=dKey(d);}
+  else if(t==='lmtd'){f.value=dKey(new Date(d.getFullYear(),d.getMonth()-1,1));to.value=dKey(new Date(d.getFullYear(),d.getMonth()-1,d.getDate()));}
+  else if(t==='7d'){const x=new Date(d);x.setDate(x.getDate()-7);f.value=dKey(x);to.value=dKey(d);}
+  else if(t==='30d'){const x=new Date(d);x.setDate(x.getDate()-30);f.value=dKey(x);to.value=dKey(d);}
+  gDf=f.value?new Date(f.value):null;gDt=to.value?new Date(to.value):null;reB();
+}
+function reB(){gDf=document.getElementById('gdf').value?new Date(document.getElementById('gdf').value):null;gDt=document.getElementById('gdt').value?new Date(document.getElementById('gdt').value):null;buildAll();}
+function apCDF(id){buildAll();}
+
+// ── PER-CHART DATE RANGE ─────────────────────────
+function cdfRange(pfx){const f=document.getElementById(pfx+'-f');const t=document.getElementById(pfx+'-t');return{from:f&&f.value?new Date(f.value):null,to:t&&t.value?new Date(t.value):null};}
+
+// Channel filter only — date is handled per-metric in mTots/dayTots
+function gFil(){
+  return raw.filter(r=>{
+    const ch=r[F.CHANNEL]||'';
+    if(aCh==='ALL') return true;
+    if(aCh==='RED') return isRed(r);
+    return ch.toLowerCase().includes(aCh.toLowerCase());
+  });
+}
+
+// rowsInRange: each metric checked against ITS OWN date column
+function rowsInRange(rows,col,from,to){
+  return rows.filter(r=>{
+    const d=dt(r[col]);
+    return dateInRange(d,from,to);
+  });
+}
+
+// mTots: every metric uses its OWN date column independently
+// Lead = LEAD_CREATION_DATE, Login = LOGIN_DATE, etc.
+// A row that was created in March but Logged on 27 Apr → counts as Login on 27 Apr ✅
+function mTots(rows,from,to){
+  const leads   = rowsInRange(rows,F.LEAD_DT,  from,to);
+  const logins  = rowsInRange(rows,F.LOGIN_DT, from,to);
+  const approvs = rowsInRange(rows,F.APPROV_DT,from,to);
+  const disbs   = rowsInRange(rows,F.DISB_DT,  from,to);
+  const tnc     = rowsInRange(rows,F.TNC_GEN,  from,to);
+  return{
+    leads:   leads.length,
+    logins:  logins.length,
+    approvs: approvs.length,
+    disbs:   disbs.length,
+    tnc:     tnc.length,
+    red:     leads.filter(isRed).length,
+    amount:  disbs.reduce((s,r)=>s+n(r[F.LOAN_SANCTION]),0),
+    active:  new Set(leads.filter(r=>!isRed(r)).map(r=>r[F.DEALER_CODE]).filter(Boolean)).size,
+  };
+}
+
+// Daily series by col in range
+function dailySeries(rows,col,from,to){
+  const map={};
+  rowsInRange(rows,col,from,to).forEach(r=>{const k=dKey(dt(r[col]));if(k)map[k]=(map[k]||0)+1;});
+  const days=[];const t=new Date(from);while(t<=to){days.push(dKey(new Date(t)));t.setDate(t.getDate()+1);}
+  return{days,vals:days.map(k=>map[k]||0)};
+}
+
+// Day labels for day-of-month alignment (1,2,3…)
+function domSeries(rows,col,year,month){
+  const map={};rowsInRange(rows,col,new Date(year,month,1),new Date(year,month+1,0)).forEach(r=>{const d=dt(r[col]);if(d)map[d.getDate()]=(map[d.getDate()]||0)+1;});
+  const dom=TODAY.getMonth()===month&&TODAY.getFullYear()===year?TODAY.getDate():dim(new Date(year,month,1));
+  const days=Array.from({length:dom},(_,i)=>i+1);
+  return{days,vals:days.map(d=>map[d]||0)};
+}
+
+// Charts map
+const CH={};
+function mkChart(id,type,data,opts={}){if(CH[id])CH[id].destroy();const ctx=document.getElementById(id);if(!ctx)return;CH[id]=new Chart(ctx,{type,data,options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},...opts}});}
+
+// ── BUILD ALL ────────────────────────────────────
+function buildAll(){
+  const rows=gFil();
+  const mr=mtdR(),lr=lmtdR(),lmfr=lmFullR();
+  const mtd=mTots(rows,mr.s,mr.e);
+  const lmtd=mTots(rows,lr.s,lr.e);
+  const lmFull=mTots(rows,lmfr.s,lmfr.e);
+
+  // Apply per-chart date range for trend
+  const trf=cdfRange('tr');
+  const trFrom=trf.from||(()=>{const x=new Date(TODAY);x.setDate(x.getDate()-30);return x;})();
+  const trTo=trf.to||TODAY;
+
+  bD0D1();
+  bKPIs(mtd,lmtd);
+  bMVL(mtd,lmtd,lmFull);
+  bTrend(rows,trFrom,trTo);
+  bPies(rows);
+  bRegionCity(rows);
+  bMTDvsLMTD(rows,mr,lr);
+  bSM(rows,mr,lr);
+  bRSM(rows,mr,lr);
+  bD1Disb();
+  bChannels(rows);
+  bDealers(rows,mtd);
+  bRawTable();
+}
+
+// ── D0/D1 ────────────────────────────────────────
+function bD0D1(){
+  // Uses raw[] directly - bypasses channel/date global filters so numbers are always correct
+  const d0=new Date(TODAY), d1=new Date(TODAY); d1.setDate(d1.getDate()-1);
+  document.getElementById('d0dt').textContent=d0.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('d1dt').textContent=d1.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  function dayTots(day){
+    const s=new Date(day); s.setHours(0,0,0,0);
+    const e=new Date(day); e.setHours(23,59,59,999);
+    // Each metric uses ITS OWN date column - this is the key fix
+    return {
+      leads:   raw.filter(r=>sameDay(dt(r[F.LEAD_DT]),day)).length,
+      logins:  raw.filter(r=>sameDay(dt(r[F.LOGIN_DT]),day)).length,
+      approvs: raw.filter(r=>sameDay(dt(r[F.APPROV_DT]),day)).length,
+      disbs:   raw.filter(r=>sameDay(dt(r[F.DISB_DT]),day)).length,
+      tnc:     raw.filter(r=>sameDay(dt(r[F.TNC_GEN]),day)).length,
+      red:     raw.filter(r=>sameDay(dt(r[F.LEAD_DT]),day)&&isRed(r)).length,
+    };
+  }
+  [['d0g',d0],['d1g',d1]].forEach(([id,day])=>{
+    const m=dayTots(day);
+    document.getElementById(id).innerHTML=[
+      {l:'Leads',     v:m.leads},
+      {l:'Logins',    v:m.logins,  s:pct(m.logins,m.leads)},
+      {l:'Approvals', v:m.approvs, s:pct(m.approvs,m.logins)},
+      {l:'Disbursals',v:m.disbs,   s:pct(m.disbs,m.leads)},
+      {l:'TNC Gen',   v:m.tnc},
+      {l:'Red Cases', v:m.red,     s:pct(m.red,m.leads)},
+    ].map(x=>`<div class="dstat"><div class="dstat-l">${x.l}</div><div class="dstat-v">${x.v.toLocaleString('en-IN')}</div>${x.s?`<div class="dstat-s">${x.s}</div>`:''}</div>`).join('');
+  });
+
+  // MTD block
+  document.getElementById('mtddt').textContent='01/'+(TODAY.getMonth()+1).toString().padStart(2,'0')+'/'+TODAY.getFullYear()+' → '+TODAY.toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const mr2=mtdR();
+  const mtdAll={
+    leads:   raw.filter(r=>dateInRange(dt(r[F.LEAD_DT]),mr2.s,mr2.e)).length,
+    logins:  raw.filter(r=>dateInRange(dt(r[F.LOGIN_DT]),mr2.s,mr2.e)).length,
+    approvs: raw.filter(r=>dateInRange(dt(r[F.APPROV_DT]),mr2.s,mr2.e)).length,
+    disbs:   raw.filter(r=>dateInRange(dt(r[F.DISB_DT]),mr2.s,mr2.e)).length,
+    tnc:     raw.filter(r=>dateInRange(dt(r[F.TNC_GEN]),mr2.s,mr2.e)).length,
+    red:     raw.filter(r=>dateInRange(dt(r[F.LEAD_DT]),mr2.s,mr2.e)&&isRed(r)).length,
+    active:  new Set(raw.filter(r=>dateInRange(dt(r[F.LEAD_DT]),mr2.s,mr2.e)&&!isRed(r)).map(r=>r[F.DEALER_CODE]).filter(Boolean)).size,
+  };
+  document.getElementById('mtdg').innerHTML=[
+    {l:'Active Dealers',v:mtdAll.active},
+    {l:'Leads',         v:mtdAll.leads},
+    {l:'Logins',        v:mtdAll.logins,  s:pct(mtdAll.logins,mtdAll.leads)},
+    {l:'Approvals',     v:mtdAll.approvs, s:pct(mtdAll.approvs,mtdAll.logins)},
+    {l:'Disbursals',    v:mtdAll.disbs,   s:pct(mtdAll.disbs,mtdAll.leads)},
+    {l:'Red Cases',     v:mtdAll.red,     s:pct(mtdAll.red,mtdAll.leads)},
+  ].map(x=>`<div class="dstat"><div class="dstat-l">${x.l}</div><div class="dstat-v">${x.v.toLocaleString('en-IN')}</div>${x.s?`<div class="dstat-s">${x.s}</div>`:''}</div>`).join('');
+}
+
+// ── KPIs ─────────────────────────────────────────
+function bKPIs(mtd,lmtd){
+  const kpis=[
+    {l:'Active Dealers', v:fmtN(mtd.active),    s:'Unique dealers MTD',        c:'#1847d4'},
+    {l:'Total Leads',    v:fmtN(mtd.leads),      s:delta(mtd.leads,lmtd.leads)+' vs LMTD', c:'#5a1fd4'},
+    {l:'Logins',         v:fmtN(mtd.logins),     s:pct(mtd.logins,mtd.leads)+' of leads', c:'#c8610a'},
+    {l:'Approvals',      v:fmtN(mtd.approvs),    s:pct(mtd.approvs,mtd.logins)+' of logins', c:'#0b7b7b'},
+    {l:'Disbursals',     v:fmtN(mtd.disbs),      s:delta(mtd.disbs,lmtd.disbs)+' vs LMTD', c:'#0e7c45'},
+    {l:'TNC Generated',  v:fmtN(mtd.tnc),        s:pct(mtd.tnc,mtd.logins)+' of logins', c:'#b01562'},
+    {l:'Red Cases',      v:fmtN(mtd.red),        s:pct(mtd.red,mtd.leads)+' of leads', c:'#c0152a'},
+    {l:'Sanction Amt',   v:'₹'+fmtN(mtd.amount), s:'MTD disbursed value', c:'#1847d4'},
+    {l:'Login %',        v:pct(mtd.logins,mtd.leads),  s:'Lead→Login',   c:'#5a1fd4'},
+    {l:'Approval %',     v:pct(mtd.approvs,mtd.logins),s:'Login→Approval',c:'#0b7b7b'},
+    {l:'Disb %',         v:pct(mtd.disbs,mtd.leads),   s:'Lead→Disbursal',c:'#0e7c45'},
+  ];
+  document.getElementById('kpis').innerHTML=kpis.map(k=>`<div class="kc" style="--kc:${k.c}"><div class="kl">${k.l}</div><div class="kv">${k.v}</div><div class="ks">${k.s}</div></div>`).join('');
+  document.getElementById('period').textContent=`MTD: ${dKey(mtdR().s)} → ${dKey(mtdR().e)}`;
+}
+
+// ── MTD vs LMTD CARDS ────────────────────────────
+function bMVL(mtd,lmtd,lmFull){
+  const ms=[
+    {l:'Leads',     a:mtd.leads,   b:lmtd.leads,   lm:lmFull.leads,   c:'#5a1fd4'},
+    {l:'Logins',    a:mtd.logins,  b:lmtd.logins,  lm:lmFull.logins,  c:'#c8610a'},
+    {l:'Approvals', a:mtd.approvs, b:lmtd.approvs, lm:lmFull.approvs, c:'#0b7b7b'},
+    {l:'Disbursals',a:mtd.disbs,   b:lmtd.disbs,   lm:lmFull.disbs,   c:'#0e7c45'},
+  ];
+  document.getElementById('mvl').innerHTML=ms.map(m=>{
+    const pace=m.lm?((m.a/m.lm)*100).toFixed(0):0;
+    return`<div class="card"><div class="ct" style="color:${m.c}"><strong>${m.l}</strong></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <div><div style="font-size:9px;color:var(--ink3);font-weight:700;letter-spacing:.1em;margin-bottom:4px;font-family:'JetBrains Mono',monospace">MTD</div><div style="font-size:26px;font-weight:800;color:${m.c};line-height:1;letter-spacing:-.02em">${fmtN(m.a)}</div></div>
+        <div style="text-align:right"><div style="font-size:9px;color:var(--ink3);font-weight:700;letter-spacing:.1em;margin-bottom:4px;font-family:'JetBrains Mono',monospace">LMTD</div><div style="font-size:26px;font-weight:800;color:var(--ink3);line-height:1;letter-spacing:-.02em">${fmtN(m.b)}</div></div>
+      </div>
+      <div style="height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin-bottom:7px"><div style="height:100%;width:${Math.min(+pace/1.5,100).toFixed(1)}%;background:${m.c};border-radius:3px;transition:width 1s ease"></div></div>
+      <div style="font-size:11px;color:var(--ink3);font-weight:600">${pace}% vs LM pace &nbsp;${delta(m.a,m.b)}</div>
+    </div>`;}).join('');
+}
+
+// ── TREND CHART ──────────────────────────────────
+function bTrend(rows,from,to){
+  const days=[];const t=new Date(from);while(t<=to){days.push(dKey(new Date(t)));t.setDate(t.getDate()+1);}
+  const agg=(col)=>{const m={};rowsInRange(rows,col,from,to).forEach(r=>{const k=dKey(dt(r[col]));if(k)m[k]=(m[k]||0)+1;});return days.map(d=>m[d]||0);};
+  const labels=days.map(d=>{const x=new Date(d);return x.getDate()+'/'+(x.getMonth()+1);});
+  mkChart('cTrend','line',{
+    labels,
+    datasets:[
+      {label:'Leads',     data:agg(F.LEAD_DT),  borderColor:'#1847d4',backgroundColor:'#1847d420',borderWidth:2,tension:.3,fill:true,pointRadius:2,pointHoverRadius:5,...NO_DL},
+      {label:'Logins',    data:agg(F.LOGIN_DT),  borderColor:'#5a1fd4',backgroundColor:'#5a1fd420',borderWidth:2,tension:.3,fill:true,pointRadius:2,pointHoverRadius:5,...NO_DL},
+      {label:'Approvals', data:agg(F.APPROV_DT), borderColor:'#c8610a',backgroundColor:'#c8610a15',borderWidth:2,tension:.3,fill:true,pointRadius:2,pointHoverRadius:5,...NO_DL},
+      {label:'Disbursals',data:agg(F.DISB_DT),   borderColor:'#0e7c45',backgroundColor:'#0e7c4515',borderWidth:2,tension:.3,fill:true,pointRadius:2,pointHoverRadius:5,...NO_DL},
+    ]
+  },{plugins:{legend:{position:'top',align:'end'},datalabels:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'}},x:{grid:{display:false},ticks:{maxRotation:45,minRotation:45,font:{size:10}}}}});
+}
+
+// ── PIE CHARTS ───────────────────────────────────
+function bPies(rows){
+  function pie(id,grpFn,valFn){
+    const g={};rows.forEach(r=>{const k=grpFn(r)||'Other';g[k]=(g[k]||0)+valFn(r);});
+    const ents=Object.entries(g).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    mkChart(id,'doughnut',{labels:ents.map(([k])=>k),datasets:[{data:ents.map(([,v])=>v),backgroundColor:P,borderWidth:2,borderColor:'#fff'}]},
+    {plugins:{legend:{position:'right',labels:{padding:8,font:{size:10}}},datalabels:{...DL_PIE.datalabels},tooltip:{callbacks:{label:c=>{const t=c.dataset.data.reduce((a,b)=>a+b,0);return`${c.label}: ${fmtN(c.parsed)} (${((c.parsed/t)*100).toFixed(1)}%)`;}}}}});
+  }
+  pie('cPL',r=>r[F.CHANNEL],()=>1);
+  pie('cPD',r=>r[F.CHANNEL],r=>dt(r[F.DISB_DT])?1:0);
+  pie('cPR',r=>isRed(r)?'Red Flag':'Normal',()=>1);
+}
+
+// ── REGION & CITY ────────────────────────────────
+function bRegionCity(rows){
+  function hbar(id,grpFn,valFn,color){
+    const g={};rows.forEach(r=>{const k=grpFn(r)||'Other';g[k]=(g[k]||0)+valFn(r);});
+    const ents=Object.entries(g).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    mkChart(id,'bar',{labels:ents.map(([k])=>k),datasets:[{label:'Count',data:ents.map(([,v])=>v),backgroundColor:color||P[0],borderRadius:5,...DL_BAR}]},
+    {indexAxis:'y',plugins:{legend:{display:false},...DL_BAR.datalabels},scales:{x:{beginAtZero:true,grid:{color:'#e4e9f2'}},y:{grid:{display:false}}}});
+  }
+  hbar('cReg',r=>r[F.REGION]||'—',()=>1,'#5a1fd4');
+  hbar('cCity',r=>r[F.CITY]||'—',r=>dt(r[F.DISB_DT])?1:0,'#0e7c45');
+}
+
+// ── MTD vs LMTD CHARTS ───────────────────────────
+function bMTDvsLMTD(rows,mr,lr){
+  const t=new Date(TODAY),dom=t.getDate();
+  const labels=Array.from({length:dom},(_,i)=>'D'+(i+1));
+  const domS=(col,year,month)=>{const s=domSeries(rows,col,year,month);return s.vals;};
+
+  function cmp(id,col,color){
+    mkChart(id,'bar',{labels,datasets:[
+      {label:'MTD',  data:domS(col,t.getFullYear(),t.getMonth()),   backgroundColor:color,       borderRadius:4,barPercentage:.7,...DL_BAR},
+      {label:'LMTD', data:domS(col,t.getFullYear(),t.getMonth()-1), backgroundColor:color+'66', borderRadius:4,barPercentage:.7,...DL_BAR},
+    ]},{plugins:{legend:{position:'top',align:'end'},datalabels:DL_BAR.datalabels},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'}},x:{grid:{display:false},ticks:{font:{size:10}}}}});
+  }
+  cmp('cML','LEAD_CREATION_DATE','#1847d4'); // directly use string since domSeries uses col name
+  cmp('cMLg','LOGIN_DATE','#5a1fd4');
+  cmp('cMA','APPROVAL_DATE','#c8610a');
+  cmp('cMD','DISBURSAL_DATETIME','#0e7c45');
+  cmp('cMR','RED_FLAG',// special - daily red leads
+    '#c0152a');
+
+  // TNC
+  const tncS=(year,month)=>{const m={};rowsInRange(rows,F.TNC_GEN,new Date(year,month,1),new Date(year,month+1,0)).forEach(r=>{const d=dt(r[F.TNC_GEN]);if(d)m[d.getDate()]=(m[d.getDate()]||0)+1;});return Array.from({length:dom},(_,i)=>m[i+1]||0);};
+  mkChart('cMT','bar',{labels,datasets:[
+    {label:'MTD',  data:tncS(t.getFullYear(),t.getMonth()),   backgroundColor:'#b01562',  borderRadius:4,barPercentage:.7,...DL_BAR},
+    {label:'LMTD', data:tncS(t.getFullYear(),t.getMonth()-1),backgroundColor:'#b0156266',borderRadius:4,barPercentage:.7,...DL_BAR},
+  ]},{plugins:{legend:{position:'top',align:'end'},datalabels:DL_BAR.datalabels},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'}},x:{grid:{display:false},ticks:{font:{size:10}}}}});
+
+  // Cumulative
+  const cum=arr=>arr.reduce((a,v,i)=>{a.push((a[i-1]||0)+(v||0));return a;},[]);
+  mkChart('cCum','line',{labels,datasets:[
+    {label:'MTD Leads',      data:cum(domS(F.LEAD_DT,t.getFullYear(),t.getMonth())),      borderColor:'#1847d4',borderWidth:2.5,tension:.3,pointRadius:0,fill:false,...NO_DL},
+    {label:'LMTD Leads',     data:cum(domS(F.LEAD_DT,t.getFullYear(),t.getMonth()-1)),    borderColor:'#1847d4',borderWidth:2,borderDash:[5,4],tension:.3,pointRadius:0,fill:false,...NO_DL},
+    {label:'MTD Disbursals', data:cum(domS(F.DISB_DT,t.getFullYear(),t.getMonth())),      borderColor:'#0e7c45',borderWidth:2.5,tension:.3,pointRadius:0,fill:false,...NO_DL},
+    {label:'LMTD Disbursals',data:cum(domS(F.DISB_DT,t.getFullYear(),t.getMonth()-1)),   borderColor:'#0e7c45',borderWidth:2,borderDash:[5,4],tension:.3,pointRadius:0,fill:false,...NO_DL},
+  ]},{plugins:{legend:{position:'top',align:'end'},datalabels:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'}},x:{grid:{display:false}}}});
+}
+
+// ── RUN RATE ─────────────────────────────────────
+
+// ── FUNNEL ───────────────────────────────────────
+function bChannels(rows){
+  const g={};rows.forEach(r=>{
+    const ch=r[F.CHANNEL]||'Other';
+    if(!g[ch])g[ch]={leads:0,logins:0,approvs:0,disbs:0,red:0,tnc:0,amount:0};
+    const x=g[ch];
+    if(dt(r[F.LEAD_DT]))   x.leads++;
+    if(dt(r[F.LOGIN_DT]))  x.logins++;
+    if(dt(r[F.APPROV_DT])) x.approvs++;
+    if(dt(r[F.DISB_DT]))   x.disbs++;
+    if(isRed(r))            x.red++;
+    if(dt(r[F.TNC_GEN]))   x.tnc++;
+    x.amount+=n(r[F.LOAN_SANCTION]);
+  });
+  const ents=Object.entries(g).filter(([,v])=>v.leads>0).sort((a,b)=>b[1].leads-a[1].leads);
+  const heads=['Channel','Leads','Logins','Login %','Approvals','Approv %','Disbursals','Disb %','TNC','Red','Sanction Amt'];
+  document.getElementById('cht-h').innerHTML=heads.map(h=>`<th>${h}</th>`).join('');
+  document.getElementById('cht-b').innerHTML=ents.map(([ch,x])=>`
+    <tr>
+      <td><span class="ch ${chCls(ch)}">${ch}</span></td>
+      <td class="nm">${x.leads}</td><td class="nm">${x.logins}</td>
+      <td class="pc">${pct(x.logins,x.leads)}</td>
+      <td class="nm">${x.approvs}</td><td class="pc">${pct(x.approvs,x.logins)}</td>
+      <td class="nm" style="color:#0e7c45">${x.disbs}</td>
+      <td class="pc">${pct(x.disbs,x.leads)}</td>
+      <td class="nm">${x.tnc}</td>
+      <td class="nm" style="color:#c0152a">${x.red}</td>
+      <td class="pc">₹${fmtN(x.amount)}</td>
+    </tr>`).join('');
+
+  const chL=ents.map(([c])=>c);
+  mkChart('cChM','bar',{labels:chL,datasets:[
+    {label:'Leads',     data:ents.map(([,x])=>x.leads),  backgroundColor:'#1847d4',borderRadius:4,...NO_DL},
+    {label:'Logins',    data:ents.map(([,x])=>x.logins), backgroundColor:'#5a1fd4',borderRadius:4,...NO_DL},
+    {label:'Approvals', data:ents.map(([,x])=>x.approvs),backgroundColor:'#c8610a',borderRadius:4,...NO_DL},
+    {label:'Disbursals',data:ents.map(([,x])=>x.disbs),  backgroundColor:'#0e7c45',borderRadius:4,...NO_DL},
+  ]},{plugins:{legend:{position:'top',align:'end'},datalabels:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'}},x:{grid:{display:false},ticks:{maxRotation:45,minRotation:45,font:{size:10}}}}});
+
+  mkChart('cChC','bar',{labels:chL,datasets:[
+    {label:'Login %',  data:ents.map(([,x])=>pctN(x.logins,x.leads)),  backgroundColor:'#5a1fd4',borderRadius:4,...DL_BAR},
+    {label:'Approv %', data:ents.map(([,x])=>pctN(x.approvs,x.logins)),backgroundColor:'#c8610a',borderRadius:4,...DL_BAR},
+    {label:'Disb %',   data:ents.map(([,x])=>pctN(x.disbs,x.leads)),   backgroundColor:'#0e7c45',borderRadius:4,...DL_BAR},
+  ]},{plugins:{legend:{position:'top',align:'end'},datalabels:{...DL_BAR.datalabels,formatter:v=>`${v.toFixed(1)}%`}},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false},ticks:{maxRotation:45,minRotation:45,font:{size:10}}}}});
+
+  // DS_CHANNEL & Channel Revised pies
+  function cPie(id,col){const g2={};rows.forEach(r=>{const k=r[col]||'Other';g2[k]=(g2[k]||0)+1;});const e2=Object.entries(g2).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,8);mkChart(id,'doughnut',{labels:e2.map(([k])=>k),datasets:[{data:e2.map(([,v])=>v),backgroundColor:P,borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'right',labels:{padding:8,font:{size:10}}},datalabels:{...DL_PIE.datalabels}}});}
+  cPie('cDSCh',F.CHANNEL_DS);
+  cPie('cChR',F.CHANNEL_REV);
+}
+
+// ── DEALERS ──────────────────────────────────────
+function bDealers(rows){
+  const g={};rows.forEach(r=>{
+    const code=r[F.DEALER_CODE]||'—',name=r[F.DEALER]||'Unknown';
+    if(!g[code])g[code]={name,code,city:r[F.CITY]||'—',channel:r[F.CHANNEL]||'—',leads:0,logins:0,approvs:0,disbs:0,red:0,amount:0};
+    const x=g[code];
+    if(dt(r[F.LEAD_DT]))   x.leads++;
+    if(dt(r[F.LOGIN_DT]))  x.logins++;
+    if(dt(r[F.APPROV_DT])) x.approvs++;
+    if(dt(r[F.DISB_DT]))   x.disbs++;
+    if(isRed(r))            x.red++;
+    x.amount+=n(r[F.LOAN_SANCTION]);
+  });
+  dlAll=Object.values(g).sort((a,b)=>b.disbs-a.disbs);dlFil=[...dlAll];
+  document.getElementById('dlc').textContent=dlAll.length+' dealers';
+
+  const activeD=dlAll.filter(d=>d.disbs>0).length;
+  const totalD=dlAll.reduce((s,d)=>s+d.disbs,0);
+  document.getElementById('dlkpi').innerHTML=[
+    {l:'Total Dealers',  v:fmtN(dlAll.length),  s:'In selected period', c:'#0b1f45'},
+    {l:'Active (Disb)',  v:fmtN(activeD),       s:pct(activeD,dlAll.length)+' have disbursed', c:'#0e7c45'},
+    {l:'Top 5 Share',    v:pct(dlAll.slice(0,5).reduce((s,d)=>s+d.disbs,0),totalD), s:'of total disbursals', c:'#1847d4'},
+    {l:'Total Red',      v:fmtN(dlAll.reduce((s,d)=>s+d.red,0)), s:'Red flag cases', c:'#c0152a'},
+  ].map(k=>`<div class="kc" style="--kc:${k.c}"><div class="kl">${k.l}</div><div class="kv">${k.v}</div><div class="ks">${k.s}</div></div>`).join('');
+
+  const top15=dlAll.slice(0,15);
+  mkChart('cTD','bar',{labels:top15.map(d=>d.name),datasets:[
+    {label:'Leads',     data:top15.map(d=>d.leads),  backgroundColor:'#1847d455',borderRadius:4,...NO_DL},
+    {label:'Disbursals',data:top15.map(d=>d.disbs),  backgroundColor:'#0e7c45',  borderRadius:4,...DL_BAR},
+  ]},{indexAxis:'y',plugins:{legend:{position:'top',align:'end'},datalabels:DL_BAR.datalabels},scales:{x:{beginAtZero:true,grid:{color:'#e4e9f2'}},y:{grid:{display:false},ticks:{font:{size:10}}}}});
+
+  const top15c=dlAll.filter(d=>d.leads>=5).slice(0,15);
+  mkChart('cDC','bar',{labels:top15c.map(d=>d.name),datasets:[{label:'Lead→Disb %',data:top15c.map(d=>pctN(d.disbs,d.leads)),backgroundColor:P,borderRadius:4,...DL_BAR}]},
+  {indexAxis:'y',plugins:{legend:{display:false},datalabels:{...DL_BAR.datalabels,formatter:v=>`${v.toFixed(1)}%`}},scales:{x:{beginAtZero:true,grid:{color:'#e4e9f2'},ticks:{callback:v=>v+'%'}},y:{grid:{display:false},ticks:{font:{size:10}}}}});
+
+  renderDlTable();
+}
+function fD(q){const l=q.toLowerCase();dlFil=l?dlAll.filter(d=>d.name.toLowerCase().includes(l)||d.code.toLowerCase().includes(l)||d.city.toLowerCase().includes(l)):[...dlAll];dlPg=0;renderDlTable();}
+function renderDlTable(){
+  document.getElementById('dlt-h').innerHTML=['Code','Dealer','City','Channel','Leads','Logins','Login %','Approvals','Approv %','Disbursals','L→D %','Red','Sanction'].map(h=>`<th>${h}</th>`).join('');
+  const s=dlPg*PG,sl=dlFil.slice(s,s+PG);
+  document.getElementById('dlt-b').innerHTML=sl.map(d=>`
+    <tr>
+      <td class="pc">${d.code}</td>
+      <td><strong style="color:var(--ink)">${d.name}</strong></td>
+      <td style="color:var(--ink3)">${d.city}</td>
+      <td><span class="ch ${chCls(d.channel)}">${d.channel}</span></td>
+      <td class="nm">${d.leads}</td><td class="nm">${d.logins}</td>
+      <td class="pc">${pct(d.logins,d.leads)}</td>
+      <td class="nm">${d.approvs}</td><td class="pc">${pct(d.approvs,d.logins)}</td>
+      <td class="nm" style="color:#0e7c45">${d.disbs}</td>
+      <td class="pc">${pct(d.disbs,d.leads)}</td>
+      <td class="nm" style="color:#c0152a">${d.red}</td>
+      <td class="pc">₹${fmtN(d.amount)}</td>
+    </tr>`).join('');
+  const t=dlFil.length,pg=Math.ceil(t/PG)||1;
+  document.getElementById('dlpg').innerHTML=`<span>Showing ${s+1}–${Math.min(s+PG,t)} of ${t}</span><div style="margin-left:auto;display:flex;gap:8px;align-items:center">${dlPg>0?`<button class="chip" onclick="dlPg--;renderDlTable()">← Prev</button>`:''}<span>Page ${dlPg+1}/${pg}</span>${dlPg<pg-1?`<button class="chip" onclick="dlPg++;renderDlTable()">Next →</button>`:''}</div>`;
+}
+
+// ── RAW TABLE ────────────────────────────────────
+function fR(q){const l=q.toLowerCase();rwFil=l?rwAll.filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(l))):[...rwAll];rwPg=0;renderRwTable();}
+function renderRwTable(){
+  // Show key columns first
+  const keyC=[F.ID,F.LEAD_DT,F.LOGIN_DT,F.APPROV_DT,F.DISB_DT,F.CHANNEL,F.DEALER,F.CITY,F.RED,F.FINAL_STATUS];
+  const allC=rwFil.length?Object.keys(rwFil[0]):[];
+  const cols=[...keyC.filter(c=>allC.includes(c)),...allC.filter(c=>!keyC.includes(c))].slice(0,16);
+  document.getElementById('rwt-h').innerHTML=cols.map(c=>`<th title="${c}">${c.length>14?c.slice(0,12)+'…':c}</th>`).join('');
+  const s=rwPg*PG,sl=rwFil.slice(s,s+PG);
+  document.getElementById('rwt-b').innerHTML=sl.map(r=>`<tr>${cols.map(c=>{const v=r[c]||'';const isN=!isNaN(parseFloat(v.replace(/[₹, ]/g,'')))&&v!=='';return`<td class="${isN?'nm':''}" title="${v}">${v.length>22?v.slice(0,20)+'…':v}</td>`;}).join('')}</tr>`).join('');
+  const t=rwFil.length,pg=Math.ceil(t/PG)||1;
+  document.getElementById('rwpg').innerHTML=`<span>Showing ${s+1}–${Math.min(s+PG,t)} of ${t}</span><div style="margin-left:auto;display:flex;gap:8px;align-items:center">${rwPg>0?`<button class="chip" onclick="rwPg--;renderRwTable()">← Prev</button>`:''}<span>Page ${rwPg+1}/${pg}</span>${rwPg<pg-1?`<button class="chip" onclick="rwPg++;renderRwTable()">Next →</button>`:''}</div>`;
+}
+function bRawTable(){document.getElementById('rwc').textContent=raw.length+' rows';renderRwTable();}
+
+
+// ── SM VIEW ──────────────────────────────────────
+function bSM(rows,mr,lr){
+  // Use raw[] filtered by channel only — each metric uses its own date column
+  const chRows=raw.filter(r=>aCh==='ALL'?true:aCh==='RED'?isRed(r):(r[F.CHANNEL]||'').toLowerCase().includes(aCh.toLowerCase()));
+  function smTots(smName,from,to){
+    const r=chRows.filter(x=>x[F.SM]===smName);
+    return{
+      leads:  rowsInRange(r,F.LEAD_DT,  from,to).length,
+      logins: rowsInRange(r,F.LOGIN_DT, from,to).length,
+      approvs:rowsInRange(r,F.APPROV_DT,from,to).length,
+      disbs:  rowsInRange(r,F.DISB_DT,  from,to).length,
+      red:    rowsInRange(r,F.LEAD_DT,  from,to).filter(isRed).length,
+    };
+  }
+  const sms=[...new Set(chRows.map(r=>r[F.SM]).filter(Boolean))].sort();
+  const heads=['SM Name','MTD Leads','LMTD Leads','Δ','MTD Logins','LMTD Logins','MTD Approvals','LMTD Approvals','MTD Disb','LMTD Disb','Login %','Approv %','Disb %','Red'];
+  document.getElementById('smt-h').innerHTML=heads.map(h=>`<th>${h}</th>`).join('');
+  document.getElementById('smt-b').innerHTML=sms.map(sm=>{
+    const m=smTots(sm,mr.s,mr.e),l=smTots(sm,lr.s,lr.e);
+    return`<tr><td><strong style="color:var(--ink)">${sm}</strong></td>
+      <td class="nm">${m.leads.toLocaleString('en-IN')}</td><td class="nm">${l.leads.toLocaleString('en-IN')}</td><td>${delta(m.leads,l.leads)}</td>
+      <td class="nm">${m.logins.toLocaleString('en-IN')}</td><td class="nm">${l.logins.toLocaleString('en-IN')}</td>
+      <td class="nm">${m.approvs.toLocaleString('en-IN')}</td><td class="nm">${l.approvs.toLocaleString('en-IN')}</td>
+      <td class="nm" style="color:#0e7c45">${m.disbs.toLocaleString('en-IN')}</td><td class="nm">${l.disbs.toLocaleString('en-IN')}</td>
+      <td class="pc">${pct(m.logins,m.leads)}</td><td class="pc">${pct(m.approvs,m.logins)}</td><td class="pc">${pct(m.disbs,m.leads)}</td>
+      <td class="nm" style="color:#c0152a">${m.red.toLocaleString('en-IN')}</td></tr>`;
+  }).join('');
+
+  // SM bar chart MTD vs LMTD
+  const smMTD=sms.map(sm=>smTots(sm,mr.s,mr.e));
+  const smLMTD=sms.map(sm=>smTots(sm,lr.s,lr.e));
+  mkChart('cSM','bar',{labels:sms,datasets:[
+    {label:'MTD Leads',     data:smMTD.map(x=>x.leads),  backgroundColor:'#1847d4',borderRadius:4,...NO_DL},
+    {label:'LMTD Leads',    data:smLMTD.map(x=>x.leads), backgroundColor:'#1847d455',borderRadius:4,...NO_DL},
+    {label:'MTD Disbursals',data:smMTD.map(x=>x.disbs),  backgroundColor:'#0e7c45',borderRadius:4,...DL_BAR},
+    {label:'LMTD Disbursals',data:smLMTD.map(x=>x.disbs),backgroundColor:'#0e7c4555',borderRadius:4,...NO_DL},
+  ]},{plugins:{legend:{position:'top',align:'end'},datalabels:DL_BAR.datalabels},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'}},x:{grid:{display:false},ticks:{maxRotation:45,minRotation:45,font:{size:10}}}}});
+
+  mkChart('cSMC','bar',{labels:sms,datasets:[
+    {label:'Login %', data:smMTD.map(x=>pctN(x.logins,x.leads)),  backgroundColor:'#5a1fd4',borderRadius:4,...DL_BAR},
+    {label:'Disb %',  data:smMTD.map(x=>pctN(x.disbs,x.leads)),   backgroundColor:'#0e7c45',borderRadius:4,...DL_BAR},
+  ]},{plugins:{legend:{position:'top',align:'end'},datalabels:{...DL_BAR.datalabels,formatter:v=>`${v.toFixed(1)}%`}},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false},ticks:{maxRotation:45,minRotation:45,font:{size:10}}}}});
+}
+
+// ── RSM VIEW ─────────────────────────────────────
+function bRSM(rows,mr,lr){
+  const chRows=raw.filter(r=>aCh==='ALL'?true:aCh==='RED'?isRed(r):(r[F.CHANNEL]||'').toLowerCase().includes(aCh.toLowerCase()));
+  function rsmTots(rsmName,from,to){
+    const r=chRows.filter(x=>x[F.RSM]===rsmName);
+    return{
+      leads:  rowsInRange(r,F.LEAD_DT,  from,to).length,
+      logins: rowsInRange(r,F.LOGIN_DT, from,to).length,
+      approvs:rowsInRange(r,F.APPROV_DT,from,to).length,
+      disbs:  rowsInRange(r,F.DISB_DT,  from,to).length,
+      red:    rowsInRange(r,F.LEAD_DT,  from,to).filter(isRed).length,
+    };
+  }
+  const rsms=[...new Set(chRows.map(r=>r[F.RSM]).filter(Boolean))].sort();
+  const heads=['RSM Name','MTD Leads','LMTD Leads','Δ','MTD Logins','LMTD Logins','MTD Approvals','LMTD Approvals','MTD Disb','LMTD Disb','Login %','Approv %','Disb %','Red'];
+  document.getElementById('rsmt-h').innerHTML=heads.map(h=>`<th>${h}</th>`).join('');
+  document.getElementById('rsmt-b').innerHTML=rsms.map(rsm=>{
+    const m=rsmTots(rsm,mr.s,mr.e),l=rsmTots(rsm,lr.s,lr.e);
+    return`<tr><td><strong style="color:var(--ink)">${rsm}</strong></td>
+      <td class="nm">${m.leads.toLocaleString('en-IN')}</td><td class="nm">${l.leads.toLocaleString('en-IN')}</td><td>${delta(m.leads,l.leads)}</td>
+      <td class="nm">${m.logins.toLocaleString('en-IN')}</td><td class="nm">${l.logins.toLocaleString('en-IN')}</td>
+      <td class="nm">${m.approvs.toLocaleString('en-IN')}</td><td class="nm">${l.approvs.toLocaleString('en-IN')}</td>
+      <td class="nm" style="color:#0e7c45">${m.disbs.toLocaleString('en-IN')}</td><td class="nm">${l.disbs.toLocaleString('en-IN')}</td>
+      <td class="pc">${pct(m.logins,m.leads)}</td><td class="pc">${pct(m.approvs,m.logins)}</td><td class="pc">${pct(m.disbs,m.leads)}</td>
+      <td class="nm" style="color:#c0152a">${m.red.toLocaleString('en-IN')}</td></tr>`;
+  }).join('');
+
+  const rsmMTD=rsms.map(rsm=>rsmTots(rsm,mr.s,mr.e));
+  const rsmLMTD=rsms.map(rsm=>rsmTots(rsm,lr.s,lr.e));
+  mkChart('cRSM','bar',{labels:rsms,datasets:[
+    {label:'MTD Leads',      data:rsmMTD.map(x=>x.leads),  backgroundColor:'#5a1fd4',borderRadius:4,...NO_DL},
+    {label:'LMTD Leads',     data:rsmLMTD.map(x=>x.leads), backgroundColor:'#5a1fd455',borderRadius:4,...NO_DL},
+    {label:'MTD Disbursals', data:rsmMTD.map(x=>x.disbs),  backgroundColor:'#0e7c45',borderRadius:4,...DL_BAR},
+    {label:'LMTD Disbursals',data:rsmLMTD.map(x=>x.disbs), backgroundColor:'#0e7c4555',borderRadius:4,...NO_DL},
+  ]},{plugins:{legend:{position:'top',align:'end'},datalabels:DL_BAR.datalabels},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'}},x:{grid:{display:false},ticks:{maxRotation:45,minRotation:45,font:{size:10}}}}});
+
+  mkChart('cRSMC','bar',{labels:rsms,datasets:[
+    {label:'Login %',data:rsmMTD.map(x=>pctN(x.logins,x.leads)),  backgroundColor:'#c8610a',borderRadius:4,...DL_BAR},
+    {label:'Disb %', data:rsmMTD.map(x=>pctN(x.disbs,x.leads)),   backgroundColor:'#0e7c45',borderRadius:4,...DL_BAR},
+  ]},{plugins:{legend:{position:'top',align:'end'},datalabels:{...DL_BAR.datalabels,formatter:v=>`${v.toFixed(1)}%`}},scales:{y:{beginAtZero:true,grid:{color:'#e4e9f2'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false},ticks:{maxRotation:45,minRotation:45,font:{size:10}}}}});
+}
+
+// ── D-1 DISBURSAL REPORT ─────────────────────────
+let d1DisbAll=[],d1DisbFil=[],d1Pg=0;
+function bD1Disb(){
+  const d1=new Date(TODAY); d1.setDate(d1.getDate()-1);
+  d1.setHours(0,0,0,0);
+  // Use ONLY DISBURSAL_DATETIME (col E) - confirmed format: 2026-04-27 18:00:30
+  d1DisbAll=raw.filter(r=>{
+    const d=dt(r[F.DISB_DT]);
+    return dateInRange(d,d1,d1);
+  });
+  d1DisbFil=[...d1DisbAll];
+  document.getElementById('d1d-dt').textContent=d1.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+' · '+d1DisbAll.length+' disbursals';
+
+  // KPIs
+  const sms={};d1DisbAll.forEach(r=>{const sm=r[F.SM]||'—';if(!sms[sm])sms[sm]=0;sms[sm]++;});
+  document.getElementById('d1d-kpi').innerHTML=[
+    {l:'Total Disbursals',v:d1DisbAll.length,c:'#0e7c45'},
+    {l:'Unique Dealers',  v:new Set(d1DisbAll.map(r=>r[F.DEALER_CODE]).filter(Boolean)).size,c:'#1847d4'},
+    {l:'Unique SMs',      v:Object.keys(sms).length,c:'#5a1fd4'},
+    {l:'Red Cases',       v:d1DisbAll.filter(isRed).length,c:'#c0152a'},
+  ].map(k=>`<div class="kc" style="--kc:${k.c}"><div class="kl">${k.l}</div><div class="kv">${k.v.toLocaleString('en-IN')}</div></div>`).join('');
+
+  // SM summary table
+  const smData=Object.entries(sms).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('d1sm-h').innerHTML=['SM Name','Disbursals','Dealers','Channels'].map(h=>`<th>${h}</th>`).join('');
+  document.getElementById('d1sm-b').innerHTML=smData.map(([sm,cnt])=>{
+    const smRows=d1DisbAll.filter(r=>r[F.SM]===sm);
+    const dealers=new Set(smRows.map(r=>r[F.DEALER_CODE]).filter(Boolean)).size;
+    const channels=[...new Set(smRows.map(r=>r[F.CHANNEL]).filter(Boolean))].join(', ');
+    return`<tr><td><strong style="color:var(--ink)">${sm}</strong></td><td class="nm" style="color:#0e7c45">${cnt.toLocaleString('en-IN')}</td><td class="nm">${dealers}</td><td style="font-size:11px;color:var(--ink3)">${channels}</td></tr>`;
+  }).join('');
+
+  renderD1Table();
+}
+function fD1(q){const l=q.toLowerCase();d1DisbFil=l?d1DisbAll.filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(l))):[...d1DisbAll];d1Pg=0;renderD1Table();}
+function renderD1Table(){
+  if(!d1DisbFil.length){document.getElementById('d1dt-h').innerHTML='<th>No disbursals found for D-1</th>';document.getElementById('d1dt-b').innerHTML='';return;}
+  // Show ALL columns (A to BC)
+  const cols=Object.keys(d1DisbFil[0]);
+  document.getElementById('d1dt-h').innerHTML=cols.map(c=>`<th title="${c}">${c.length>14?c.slice(0,12)+'…':c}</th>`).join('');
+  const s=d1Pg*PG,sl=d1DisbFil.slice(s,s+PG);
+  document.getElementById('d1dt-b').innerHTML=sl.map(r=>`<tr>${cols.map(c=>{const v=r[c]||'';return`<td title="${v}" style="white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis">${v}</td>`;}).join('')}</tr>`).join('');
+  const t=d1DisbFil.length,pg=Math.ceil(t/PG)||1;
+  document.getElementById('d1pg').innerHTML=`<span>Showing ${s+1}–${Math.min(s+PG,t)} of ${t} disbursals</span><div style="margin-left:auto;display:flex;gap:8px;align-items:center">${d1Pg>0?`<button class="chip" onclick="d1Pg--;renderD1Table()">← Prev</button>`:''}<span>Page ${d1Pg+1}/${pg}</span>${d1Pg<pg-1?`<button class="chip" onclick="d1Pg++;renderD1Table()">Next →</button>`:''}</div>`;
+}
+
+// ── INIT ─────────────────────────────────────────
+loadAll();
+scheduleNextRefresh();
+</script>
+</body>
+</html>
